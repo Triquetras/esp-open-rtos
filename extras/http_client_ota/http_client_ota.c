@@ -49,6 +49,7 @@ static mbedtls_sha256_context *sha256_ctx;
 
 static uint32_t flash_offset;
 static uint32_t flash_limits;
+static uint32_t flash_begin;
 
 static unsigned char *SHA256_output;
 static uint16_t *SHA256_dowload;
@@ -58,7 +59,7 @@ static char *SHA256_wrt_ptr;
 /**
  * CallBack called from Http Buffered client, for ota firmaware
  */
-static unsigned int ota_firmaware_dowload_callback(char *buf, uint16_t size)
+static unsigned int ota_firmaware_dowload_callback(char *buf, uint16_t size, uint16_t fullSize)
 {
     if (ota_inf->sha256_path != NULL)
         mbedtls_sha256_update(sha256_ctx, (const unsigned char *) buf, size);
@@ -75,6 +76,8 @@ static unsigned int ota_firmaware_dowload_callback(char *buf, uint16_t size)
         sector = flash_offset / SECTOR_SIZE;
         sdk_spi_flash_erase_sector(sector);
     }
+
+    ota_inf->ota_cb(100 - (fullSize - flash_begin) / (fullSize / 100));
 
     // Write into Flash
     sdk_spi_flash_write(flash_offset, (uint32_t *) buf, size);
@@ -133,6 +136,7 @@ OTA_err ota_update(ota_info *ota_info_par)
     http_inf.buffer_size = SECTOR_BUFFER_SIZE;
     http_inf.server      = ota_inf->server;
     http_inf.port        = ota_inf->port;
+    http_inf.check       = ota_inf->check;
 
     // Check memory alignement, must be aligned
     if ((unsigned int) http_inf.buffer % sizeof(unsigned int)) {
@@ -168,6 +172,7 @@ OTA_err ota_update(ota_info *ota_info_par)
 
     // Calculate room limits
     flash_offset = rboot_config.roms[slot];
+    flash_begin = flash_offset;
     flash_limits = flash_offset + MAX_IMAGE_SIZE;
 
     if (ota_inf->sha256_path != NULL) {

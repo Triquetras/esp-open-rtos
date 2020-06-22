@@ -48,6 +48,7 @@ static const struct addrinfo hints = {
 };
 
 static struct HTTP_response http_reponse;
+static uint16_t full_size;
 
 // HTTP Header Token, add here function and then register it in HTTP Table callback
 static void http_handle_cb_ContentLength(char *token)
@@ -55,7 +56,13 @@ static void http_handle_cb_ContentLength(char *token)
     token += 16; // strlen("Content-Length:"), skip useless part
     while (*token) {
         if (isdigit((int) *token))
+        {
             http_reponse.length = (unsigned int) strtol(token, &token, 10);
+            if (http_reponse.length > 20000)
+            {
+                full_size = http_reponse.length;
+            }
+        }
         else
             token++;
     }
@@ -193,6 +200,11 @@ HTTP_Client_State HttpClient_dowload(Http_client_info *info)
             full = pdu_size;
             tot_http_pdu_rd = pdu_size;
 
+            if (info->check)
+            {
+                goto err_label;
+            }
+
             if (http_reponse.response_code != HTTP_OK)
                 goto err_label;
 
@@ -201,7 +213,7 @@ HTTP_Client_State HttpClient_dowload(Http_client_info *info)
         tot_http_pdu_rd += read_byte;
 
         if (full == info->buffer_size) {
-            info->buffer_full_cb(info->buffer, full);
+            info->buffer_full_cb(info->buffer, full, full_size);
 
             memset(info->buffer, 0, info->buffer_size);
             wrt_ptr = info->buffer;
@@ -210,7 +222,7 @@ HTTP_Client_State HttpClient_dowload(Http_client_info *info)
         }
     } while (read_byte > 0);
 
-    info->final_cb(info->buffer, full);
+    info->final_cb(info->buffer, full, full_size);
     if (tot_http_pdu_rd != http_reponse.length)
         http_reponse.response_code = HTTP_DOWLOAD_SIZE_NOT_MATCH;
 

@@ -33,6 +33,8 @@ typedef enum {
 } OTA_err;
 
 
+typedef unsigned int (*ota_callback)(uint8_t percent);
+
 /**
  * \brief Create ota info.
  * Struct that contains all info for start ota.
@@ -42,6 +44,8 @@ typedef struct {
     const char *port;        /**< Server port   */
     const char *binary_path; /**< Server Path dowload new update binary */
     const char *sha256_path; /**< Server Path of SHA256 sum for check binary, could be NULL, check will be skipped */
+    ota_callback ota_cb;
+    bool check;
 } ota_info;
 
 /**

@@ -1,7 +1,7 @@
 #ifndef HTTP_BUFFERED_CLIENT
 #define HTTP_BUFFERED_CLIENT
 
-typedef unsigned int (*http_final_cb)(char *buff, uint16_t size);
+typedef unsigned int (*http_final_cb)(char *buff, uint16_t size, uint16_t fullSize);
 
 typedef enum  {
     HTTP_DNS_LOOKUP_FALLIED        = 1,
@@ -22,6 +22,7 @@ typedef struct  {
     uint16_t      buffer_size;
     http_final_cb buffer_full_cb;
     http_final_cb final_cb;
+    bool check;
 } Http_client_info;
 
 HTTP_Client_State HttpClient_dowload(Http_client_info *info);
