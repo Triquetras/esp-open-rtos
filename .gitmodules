@@ -52,3 +52,9 @@
 [submodule "extras/esp-homekit"]
 	path = extras/esp-homekit
 	url = https://github.com/Triquetras/esp-homekit
+[submodule "extras/esp-cjson"]
+	path = extras/esp-cjson
+	url = https://github.com/Triquetras/esp-cjson
+[submodule "extras/esp-wolfssl"]
+	path = extras/esp-wolfssl
+	url = https://github.com/Triquetras/esp-wolfssl
