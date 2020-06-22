@@ -46,3 +46,9 @@
 [submodule "lvgl/lv_examples"]
 	path = lvgl/lv_examples
 	url = https://github.com/littlevgl/lv_examples.git
+[submodule "extras/esp-wifi-config"]
+	path = extras/esp-wifi-config
+	url = https://github.com/Triquetras/esp-wifi-config
+[submodule "extras/esp-homekit"]
+	path = extras/esp-homekit
+	url = https://github.com/Triquetras/esp-homekit
