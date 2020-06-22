@@ -270,6 +270,13 @@ clean:
 	$(Q) rm -rf $(BUILD_DIR)
 	$(Q) rm -rf $(FIRMWARE_DIR)
 
+full: 
+	$(MAKE) all
+	cp -r $(RBOOT_PREBUILT_BIN) $(BUILD_DIR)/rboot.bin
+	cp -r $(RBOOT_CONF) $(BUILD_DIR)/rboot_config.bin
+	cat $(BUILD_DIR)/rboot.bin $(BUILD_DIR)/rboot_config.bin $(FW_FILE) > $(FIRMWARE_DIR)/$(PROGRAM)_full.bin
+
+
 # prevent "intermediate" files from being deleted
 .SECONDARY:
 

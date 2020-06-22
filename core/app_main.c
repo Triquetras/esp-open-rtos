@@ -238,7 +238,7 @@ void IRAM sdk_user_start(void) {
     sysparam_addr = flash_size - (5 + DEFAULT_SYSPARAM_SECTORS) * sdk_flashchip.sector_size;
     status = sysparam_init(sysparam_addr, flash_size);
     if (status == SYSPARAM_NOTFOUND) {
-        status = sysparam_create_area(sysparam_addr, DEFAULT_SYSPARAM_SECTORS, false);
+        status = sysparam_create_area(sysparam_addr, DEFAULT_SYSPARAM_SECTORS, true);
         if (status == SYSPARAM_OK) {
             status = sysparam_init(sysparam_addr, 0);
         }

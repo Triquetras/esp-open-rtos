@@ -16,7 +16,7 @@ FLASH_SIZE ?= 16
 FLASH_MODE ?= qio
 
 # Flash speed in MHz, valid values are same as for esptool.py - 80, 40, 26, 20
-FLASH_SPEED ?= 40
+FLASH_SPEED ?= 80
 
 # Output directories to store intermediate compiled files
 # relative to the program directory
@@ -27,7 +27,7 @@ FIRMWARE_DIR ?= $(PROGRAM_DIR)firmware/
 ESPTOOL ?= esptool.py
 # serial port settings for esptool.py
 ESPPORT ?= /dev/ttyUSB0
-ESPBAUD ?= 115200
+ESPBAUD ?= 768000
 
 # firmware tool arguments
 ESPTOOL_ARGS=-fs $(FLASH_SIZE)m -fm $(FLASH_MODE) -ff $(FLASH_SPEED)m
