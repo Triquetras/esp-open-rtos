@@ -1,7 +1,7 @@
 #ifndef HTTP_BUFFERED_CLIENT
 #define HTTP_BUFFERED_CLIENT
 
-typedef unsigned int (*http_final_cb)(char *buff, uint16_t size, uint16_t fullSize);
+typedef unsigned int (*http_final_cb)(char *buff, uint16_t size, uint32_t fullSize);
 
 typedef enum  {
     HTTP_DNS_LOOKUP_FALLIED        = 1,

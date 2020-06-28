@@ -59,7 +59,7 @@ static char *SHA256_wrt_ptr;
 /**
  * CallBack called from Http Buffered client, for ota firmaware
  */
-static unsigned int ota_firmaware_dowload_callback(char *buf, uint16_t size, uint16_t fullSize)
+static unsigned int ota_firmaware_dowload_callback(char *buf, uint16_t size, uint32_t fullSize)
 {
     if (ota_inf->sha256_path != NULL)
         mbedtls_sha256_update(sha256_ctx, (const unsigned char *) buf, size);
@@ -77,7 +77,7 @@ static unsigned int ota_firmaware_dowload_callback(char *buf, uint16_t size, uin
         sdk_spi_flash_erase_sector(sector);
     }
 
-    ota_inf->ota_cb(100 - (fullSize - flash_begin) / (fullSize / 100));
+    ota_inf->ota_cb(101 - (fullSize - (flash_offset - flash_begin)) / (fullSize / 100));
 
     // Write into Flash
     sdk_spi_flash_write(flash_offset, (uint32_t *) buf, size);

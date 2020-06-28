@@ -272,10 +272,16 @@ clean:
 
 full: 
 	$(MAKE) all
-	cp -r $(RBOOT_PREBUILT_BIN) $(BUILD_DIR)/rboot.bin
-	cp -r $(RBOOT_CONF) $(BUILD_DIR)/rboot_config.bin
-	cat $(BUILD_DIR)/rboot.bin $(BUILD_DIR)/rboot_config.bin $(FW_FILE) > $(FIRMWARE_DIR)/$(PROGRAM)_full.bin
+	cp $(RBOOT_BIN) $(BUILD_DIR)rboot.bin
+	truncate -s 4096 $(BUILD_DIR)rboot.bin
+	cp $(RBOOT_CONF) $(BUILD_DIR)rboot_blank_config.bin
+	truncate -s 4096 $(BUILD_DIR)rboot_blank_config.bin
+	cat $(BUILD_DIR)rboot.bin $(BUILD_DIR)rboot_blank_config.bin $(FW_FILE) > $(FIRMWARE_DIR)/$(PROGRAM)_full.bin
+	rm $(BUILD_DIR)rboot.bin $(BUILD_DIR)rboot_blank_config.bin
 
+full_flash:
+	$(MAKE) flash
+	$(ESPTOOL) -p $(ESPPORT) --baud $(ESPBAUD) write_flash 0x0 $(FIRMWARE_DIR)/$(PROGRAM)_full.bin
 
 # prevent "intermediate" files from being deleted
 .SECONDARY:

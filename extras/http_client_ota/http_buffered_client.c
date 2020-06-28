@@ -48,7 +48,7 @@ static const struct addrinfo hints = {
 };
 
 static struct HTTP_response http_reponse;
-static uint16_t full_size;
+static uint32_t full_size;
 
 // HTTP Header Token, add here function and then register it in HTTP Table callback
 static void http_handle_cb_ContentLength(char *token)
