@@ -117,7 +117,7 @@ float ds18b20_read_single(uint8_t pin) {
 
     temperature = (temp * 625.0)/10000;
     return temperature;
-    //debug("Got a DS18B20 Reading: %d.%02d\n", (int)temperature, (int)(temperature - (int)temperature) * 100);
+    debug("Got a DS18B20 Reading: %d.%02d\n", (int)temperature, (int)(temperature - (int)temperature) * 100);
 }
 
 bool ds18b20_measure(int pin, ds18b20_addr_t addr, bool wait) {

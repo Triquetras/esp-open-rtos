@@ -92,6 +92,10 @@ uint8 ICACHE_FLASH_ATTR rboot_get_current_rom(void) {
 bool ICACHE_FLASH_ATTR rboot_set_current_rom(uint8 rom) {
 	rboot_config conf;
 	conf = rboot_get_config();
+	printf("rboot_set_current_rom\n");
+	printf("rom %i\n", rom);
+	printf("conf.count %i\n", conf.count);
+	printf("rom >= conf.count %s\n", rom >= conf.count ? "true" : "false");
 	if (rom >= conf.count) return false;
 	conf.current_rom = rom;
 	return rboot_set_config(&conf);
@@ -275,7 +279,9 @@ bool rboot_verify_image(uint32_t initial_offset, uint32_t *image_length, const c
             error = "Flash fail";
             goto fail;
         }
-
+        
+		RBOOT_DEBUG("image_header.magic %x ROM_MAGIC_NEW  %x \n", image_header.magic, ROM_MAGIC_NEW);
+        
         RBOOT_DEBUG("Found section @ 0x%08x (abs 0x%08x) length %d load 0x%08x\n", offset-initial_offset, offset, header.length, header.load_addr);
         offset += sizeof(section_header_t);
 
@@ -311,6 +317,7 @@ bool rboot_verify_image(uint32_t initial_offset, uint32_t *image_length, const c
             /* expect a v1.1 header here at start of "real" sections */
             sdk_spi_flash_read(offset, (uint32_t *)&image_header, sizeof(image_header_t));
             offset += sizeof(image_header_t);
+			RBOOT_DEBUG("image_header.magic %x ROM_MAGIC_NEW  %x \n", image_header.magic, ROM_MAGIC_OLD);
             if(image_header.magic != ROM_MAGIC_OLD) {
                 error = "Bad second magic";
                 goto fail;

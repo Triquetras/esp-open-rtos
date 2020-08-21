@@ -19,15 +19,11 @@
 #include "rboot.h"
 #define MODULE "OTA"
 
-#if defined(DEBUG)
-# ifndef MODULE
-#  error "Module not define"
-# endif
-
-    # define DEBUG_PRINT(fmt, args ...) \
-        printf("[%s]\t" fmt "\n", MODULE, ## args)
+#ifdef OTA_DEBUG
+    #define DEBUG_PRINT(fmt, args ...) \
+    printf("[%s]\t" fmt "\n", MODULE, ## args)
 #else
-    # define DEBUG_PRINT(fmt, args ...) /* Don't do anything in release builds */
+    #define DEBUG_PRINT(fmt, args ...) 
 #endif
 
 #define MAX_IMAGE_SIZE        0x100000 /*1MB images max at the moment */
@@ -124,6 +120,7 @@ static void convert_SHA256_Str_TO_uint32(char *str, uint16_t *final_sha_bin)
 
 OTA_err ota_update(ota_info *ota_info_par)
 {
+    printf("MAX_ROMS %i \n", MAX_ROMS);
     Http_client_info http_inf;
     rboot_config rboot_config;
     HTTP_Client_State err;
@@ -159,7 +156,10 @@ OTA_err ota_update(ota_info *ota_info_par)
     rboot_config = rboot_get_config();
     slot         = (rboot_config.current_rom + 1) % rboot_config.count;
 
-    DEBUG_PRINT("Image will be saved in OTA slot %d", slot);
+    DEBUG_PRINT("Current rom set to unknow value:%d", rboot_config.current_rom);
+    DEBUG_PRINT("count:%d", rboot_config.count);
+    DEBUG_PRINT("slot:%d", slot);
+    
     if (slot == rboot_config.current_rom) {
         DEBUG_PRINT("Only one OTA slot is configured!");
         err = OTA_ONE_SLOT_ONLY;
@@ -187,7 +187,7 @@ OTA_err ota_update(ota_info *ota_info_par)
         err = HttpClient_dowload(&http_inf);
 
         // Check if dowload success
-        if (err != HTTP_OK)
+        if (err != HTTP_OK || http_inf.check)
             goto dealloc_all;
 
         convert_SHA256_Str_TO_uint32(SHA256_str, SHA256_dowload);
@@ -205,8 +205,8 @@ OTA_err ota_update(ota_info *ota_info_par)
 
     err = HttpClient_dowload(&http_inf);
 
-    if (err != HTTP_OK)
-        goto dealloc_all;
+    if (err != HTTP_OK || http_inf.check)
+            goto dealloc_all;
 
     if (ota_inf->sha256_path != NULL) {
         char com_res;
@@ -246,6 +246,7 @@ OTA_err ota_update(ota_info *ota_info_par)
             goto dealloc_all;
         } else {
             DEBUG_PRINT("%s", error_message);
+            printf("rboot_verify_image %s \n", error_message);
             err = OTA_IMAGE_VERIFY_FALLIED;
             goto dealloc_all;
         }

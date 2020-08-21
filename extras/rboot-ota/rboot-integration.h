@@ -26,7 +26,7 @@
 #define system_rtc_mem_read sdk_system_rtc_mem_read
 #define system_rtc_mem_write sdk_system_rtc_mem_write
 
-#if 0
+#ifdef RBOOT_DEBUG_ENABLE
 #define RBOOT_DEBUG(f_, ...) printf((f_), __VA_ARGS__)
 #else
 #define RBOOT_DEBUG(f_, ...)
